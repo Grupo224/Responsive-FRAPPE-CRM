@@ -1,0 +1,427 @@
+diff --git a/frontend/src/components/Activities/Activities.vue b/frontend/src/components/Activities/Activities.vue
+index 2b3cdff..9e25d2e 100644
+--- a/frontend/src/components/Activities/Activities.vue
++++ b/frontend/src/components/Activities/Activities.vue
+@@ -9,7 +9,7 @@
+     :whatsappBox="whatsappBox"
+     :modalRef="modalRef"
+   />
+-  <FadedScrollableDiv class="flex flex-col h-full overflow-y-auto">
++  <FadedScrollableDiv class="flex flex-col h-full overflow-y-auto max-md:min-h-0 max-md:min-w-0 max-md:flex-1">
+     <QuotationsList v-if="title == 'Quotations'" :deal="docname" />
+     <div
+       v-else-if="all_activities?.loading"
+diff --git a/frontend/src/components/Activities/ActivityHeader.vue b/frontend/src/components/Activities/ActivityHeader.vue
+index 8339a8e..6adf6bd 100644
+--- a/frontend/src/components/Activities/ActivityHeader.vue
++++ b/frontend/src/components/Activities/ActivityHeader.vue
+@@ -1,9 +1,9 @@
+ <template>
+   <div
+     v-if="title !== 'Data'"
+-    class="mx-3 my-3 flex items-center justify-between text-lg-medium sm:mx-10 sm:mb-4 sm:mt-8"
++    class="mx-3 my-3 flex items-center justify-between text-lg-medium max-md:min-w-0 max-md:flex-wrap max-md:gap-2 sm:mx-10 sm:mb-4 sm:mt-8"
+   >
+-    <div class="flex h-8 items-center text-2xl-semibold text-ink-gray-8">
++    <div class="flex h-8 items-center text-2xl-semibold max-md:min-w-0 text-ink-gray-8">
+       {{ __(title) }}
+     </div>
+     <Button
+@@ -46,7 +46,7 @@
+       iconLeft="lucide-plus"
+       @click="showFilesUploader = true"
+     />
+-    <div v-else-if="title == 'WhatsApp'" class="flex gap-2 shrink-0">
++    <div v-else-if="title == 'WhatsApp'" class="flex gap-2 shrink-0 max-md:min-w-0 max-md:max-w-full max-md:flex-wrap">
+       <Button
+         :label="__('Send Template')"
+         @click="showWhatsappTemplates = true"
+diff --git a/frontend/src/components/Activities/WhatsAppArea.vue b/frontend/src/components/Activities/WhatsAppArea.vue
+index fda4681..df798d0 100644
+--- a/frontend/src/components/Activities/WhatsAppArea.vue
++++ b/frontend/src/components/Activities/WhatsAppArea.vue
+@@ -1,6 +1,6 @@
+ <!-- eslint-disable vue/no-v-html -->
+ <template>
+-  <div>
++  <div class="max-md:min-w-0">
+     <div
+       v-for="whatsapp in messages"
+       :key="whatsapp.name"
+@@ -12,7 +12,7 @@
+     >
+       <div
+         :id="whatsapp.name"
+-        class="group/message relative max-w-[90%] rounded-5 bg-surface-gray-1 text-ink-gray-9 p-1.5 pl-2 text-base shadow-sm"
++        class="group/message relative max-w-[90%] max-md:min-w-0 max-md:[overflow-wrap:anywhere] rounded-5 bg-surface-gray-1 text-ink-gray-9 p-1.5 pl-2 text-base shadow-sm"
+       >
+         <Badge
+           v-if="whatsapp.status == 'failed'"
+@@ -50,7 +50,7 @@
+             </div>
+           </div>
+         </div>
+-        <div class="flex gap-2 justify-between">
++        <div class="flex gap-2 justify-between max-md:flex-wrap">
+           <div
+             v-if="whatsapp.status != 'failed'"
+             class="absolute -right-0.5 -top-0.5 flex cursor-pointer gap-1 rounded-full bg-surface-base pb-2 pl-2 pr-1.5 pt-1.5 opacity-0 group-hover/message:opacity-100"
+@@ -97,7 +97,7 @@
+           <div v-else-if="whatsapp.content_type == 'image'">
+             <img
+               :src="whatsapp.attach"
+-              class="h-40 cursor-pointer rounded-5"
++              class="h-40 cursor-pointer rounded-5 max-md:h-auto max-md:max-h-40 max-md:max-w-full"
+               @click="() => openFileInAnotherTab(whatsapp.attach)"
+             />
+             <div
+@@ -120,7 +120,7 @@
+             v-else-if="whatsapp.content_type == 'audio'"
+             class="flex items-center gap-2"
+           >
+-            <audio :src="whatsapp.attach" controls class="cursor-pointer" />
++            <audio :src="whatsapp.attach" controls class="cursor-pointer max-md:max-w-full" />
+           </div>
+           <div
+             v-else-if="whatsapp.content_type == 'video'"
+@@ -129,7 +129,7 @@
+             <video
+               :src="whatsapp.attach"
+               controls
+-              class="h-40 cursor-pointer rounded-5"
++              class="h-40 cursor-pointer rounded-5 max-md:h-auto max-md:max-h-40 max-md:max-w-full"
+             />
+             <div
+               v-if="!whatsapp.message.startsWith('/files/')"
+diff --git a/frontend/src/components/Activities/WhatsAppBox.vue b/frontend/src/components/Activities/WhatsAppBox.vue
+index 3c08859..e7ecea0 100644
+--- a/frontend/src/components/Activities/WhatsAppBox.vue
++++ b/frontend/src/components/Activities/WhatsAppBox.vue
+@@ -5,7 +5,7 @@
+     class="flex items-center justify-around gap-2 px-3 pt-2 sm:px-10"
+   >
+     <div
+-      class="mb-1 ml-13 flex-1 cursor-pointer rounded-4 border-0 border-l-4 border-green-500 bg-surface-gray-2 p-2 text-base text-ink-gray-5"
++      class="mb-1 ml-13 flex-1 max-md:ml-0 max-md:min-w-0 max-md:[overflow-wrap:anywhere] cursor-pointer rounded-4 border-0 border-l-4 border-green-500 bg-surface-gray-2 p-2 text-base text-ink-gray-5"
+       :class="reply.type == 'Incoming' ? 'border-green-500' : 'border-blue-400'"
+     >
+       <div
+@@ -59,7 +59,7 @@
+       ref="textareaRef"
+       v-model="content"
+       type="textarea"
+-      class="min-h-8 w-full"
++      class="min-h-8 w-full max-md:min-w-0 max-md:[&_textarea]:text-[16px]"
+       :rows="rows"
+       :placeholder="placeholder"
+       @focus="rows = 6"
+diff --git a/frontend/src/components/Layouts/MobileLayout.vue b/frontend/src/components/Layouts/MobileLayout.vue
+index 2835bbf..c314b4a 100644
+--- a/frontend/src/components/Layouts/MobileLayout.vue
++++ b/frontend/src/components/Layouts/MobileLayout.vue
+@@ -1,7 +1,7 @@
+ <template>
+-  <div class="flex h-screen w-screen">
++  <div class="flex h-screen h-dvh w-full max-w-full">
+     <MobileSidebar />
+-    <div class="flex h-full flex-1 flex-col overflow-auto bg-surface-base">
++    <div class="flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-y-auto bg-surface-base">
+       <MobileAppHeader />
+       <slot />
+     </div>
+diff --git a/frontend/src/components/Mobile/MobileAppHeader.vue b/frontend/src/components/Mobile/MobileAppHeader.vue
+index adc9bab..af65f4e 100644
+--- a/frontend/src/components/Mobile/MobileAppHeader.vue
++++ b/frontend/src/components/Mobile/MobileAppHeader.vue
+@@ -1,6 +1,6 @@
+ <template>
+-  <div class="flex pr-3">
+-    <div class="z-20 ml-2 flex items-center justify-center">
++  <div class="flex min-w-0 shrink-0 pr-3">
++    <div class="z-20 ml-2 flex shrink-0 items-center justify-center">
+       <Button
+         class="size-7"
+         variant="ghost"
+@@ -9,7 +9,7 @@
+         <MenuIcon class="h-4 text-ink-gray-9" />
+       </Button>
+     </div>
+-    <div id="app-header" class="flex-1" />
++    <div id="app-header" class="min-w-0 flex-1" />
+   </div>
+   <CallUI class="mr-3 mt-2" />
+ </template>
+diff --git a/frontend/src/composables/settings.js b/frontend/src/composables/settings.js
+index 8923686..35aa0f1 100644
+--- a/frontend/src/composables/settings.js
++++ b/frontend/src/composables/settings.js
+@@ -1,8 +1,9 @@
+-import { computed, ref } from 'vue'
++import { ref } from 'vue'
++import { useMediaQuery } from '@vueuse/core'
+ 
+ export const mobileSidebarOpened = ref(false)
+ 
+-export const isMobileView = computed(() => window.innerWidth < 768)
++export const isMobileView = useMediaQuery('(max-width: 767px)')
+ 
+ export const showSettings = ref(false)
+ 
+diff --git a/frontend/src/pages/MobileDeal.vue b/frontend/src/pages/MobileDeal.vue
+index ba0edbf..58f6c97 100644
+--- a/frontend/src/pages/MobileDeal.vue
++++ b/frontend/src/pages/MobileDeal.vue
+@@ -1,14 +1,21 @@
+ <template>
+   <LayoutHeader>
+     <header
+-      class="relative flex h-10.5 items-center justify-between gap-2 py-2.5 pl-2"
++      class="relative flex h-10.5 min-w-0 items-center justify-between gap-2 py-2.5 pl-2"
+     >
+-      <Breadcrumbs :items="breadcrumbs">
+-        <template #prefix="{ item }">
+-          <Icon v-if="item.icon" :icon="item.icon" class="mr-2 h-4" />
+-        </template>
+-      </Breadcrumbs>
+-      <div class="shrink-0">
++      <div class="flex min-w-0 flex-1 items-center gap-1">
++        <RouterLink
++          :to="listRoute"
++          :aria-label="__('Deals')"
++          class="flex size-8 shrink-0 items-center justify-center rounded"
++        >
++          <span class="lucide-chevron-left size-4" aria-hidden="true" />
++        </RouterLink>
++        <span class="min-w-0 truncate text-base font-medium" :title="title">
++          {{ title }}
++        </span>
++      </div>
++      <div class="min-w-0 max-w-[45%]">
+         <Dropdown
+           v-if="doc"
+           :options="
+@@ -24,6 +31,8 @@
+           <template #default="{ open }">
+             <Button
+               v-if="doc.status"
++              class="max-w-full [&>span]:min-w-0 [&>span]:truncate"
++              :title="statusLabel(doc.status)"
+               :label="statusLabel(doc.status)"
+               :iconRight="open ? 'lucide-chevron-up' : 'lucide-chevron-down'"
+             >
+@@ -38,10 +47,10 @@
+   </LayoutHeader>
+   <div
+     v-if="doc.name"
+-    class="flex h-12 items-center justify-between gap-2 border-b px-3 py-2.5"
++    class="flex min-h-12 min-w-0 shrink-0 flex-wrap items-center justify-between gap-2 border-b px-3 py-2.5"
+   >
+     <AssignTo v-model="assignees.data" doctype="CRM Deal" :docname="dealId" />
+-    <div class="flex items-center gap-2">
++    <div class="ml-auto flex min-w-0 max-w-full flex-wrap items-center justify-end gap-2">
+       <CustomActions
+         v-if="document._actions?.length"
+         :actions="document._actions"
+@@ -52,12 +61,12 @@
+       />
+     </div>
+   </div>
+-  <div v-if="doc.name" class="flex h-full overflow-hidden">
++  <div v-if="doc.name" class="flex min-h-0 min-w-0 flex-1 overflow-hidden">
+     <Tabs
+       v-model="activeTab"
+       as="div"
+       :tabs="tabs"
+-      class="flex flex-1 overflow-auto flex-col [&_[role='tab']]:px-1 [&_[role='tab']]:shrink-0 [&_[role='tablist']]:px-3 [&_[role='tablist']]:min-h-[45px] [&_[role='tablist']]:gap-[22px] [&>[role='tabpanel']:not([hidden])]:flex [&>[role='tabpanel']:not([hidden])]:grow [&>[data-slot=tab-list]]:overflow-x-auto [&_[data-slot=tab-indicator]]:translate-y-0 [&>[data-slot=tab-panel]]:min-h-0 [&>[data-slot=tab-panel]]:flex-col [&>[data-slot=tab-panel]]:overflow-auto"
++      class="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden [&_[role=tablist]]:min-w-0 [&_[role=tablist]]:max-w-full [&_[role=tablist]]:overflow-x-auto [&_[role=tabpanel]]:min-w-0 [&_[role='tab']]:px-1 [&_[role='tab']]:shrink-0 [&_[role='tablist']]:px-3 [&_[role='tablist']]:min-h-[45px] [&_[role='tablist']]:gap-[22px] [&>[role='tabpanel']:not([hidden])]:flex [&>[role='tabpanel']:not([hidden])]:grow [&>[data-slot=tab-list]]:overflow-x-auto [&_[data-slot=tab-indicator]]:translate-y-0 [&>[data-slot=tab-panel]]:min-h-0 [&>[data-slot=tab-panel]]:flex-col [&>[data-slot=tab-panel]]:overflow-auto"
+     >
+       <template #tab-panel="{ tab }">
+         <div v-if="tab.name == 'Details'">
+@@ -267,7 +276,6 @@
+ <script setup>
+ import DeleteLinkedDocModal from '@/components/DeleteLinkedDocModal.vue'
+ import ErrorPage from '@/components/ErrorPage.vue'
+-import Icon from '@/components/Icon.vue'
+ import DetailsIcon from '@/components/Icons/DetailsIcon.vue'
+ import LoadingIndicator from '@/components/Icons/LoadingIndicator.vue'
+ import ActivityIcon from '@/components/Icons/ActivityIcon.vue'
+@@ -312,7 +320,6 @@ import {
+   Dropdown,
+   Avatar,
+   Tabs,
+-  Breadcrumbs,
+   call,
+   usePageMeta,
+   toast,
+@@ -392,33 +399,17 @@ const reload = ref(false)
+ const showOrganizationModal = ref(false)
+ const _organization = ref({})
+ 
+-const breadcrumbs = computed(() => {
+-  let items = [{ label: __('Deals'), route: { name: 'Deals' } }]
+-
+-  if (route.query.view || route.query.viewType) {
+-    let view = getView(route.query.view, route.query.viewType, 'CRM Deal')
+-    if (view) {
+-      items.push({
+-        label: __(view.label),
+-        icon: view.icon,
+-        route: {
+-          name: 'Deals',
+-          params: { viewType: route.query.viewType },
+-          query: { view: route.query.view },
+-        },
+-      })
++const listRoute = computed(() => {
++  const view = (route.query.view || route.query.viewType)
++    && getView(route.query.view, route.query.viewType, 'CRM Deal')
++  if (view) {
++    return {
++      name: 'Deals',
++      params: { viewType: route.query.viewType },
++      query: { view: route.query.view },
+     }
+   }
+-
+-  items.push({
+-    label: title.value,
+-    route: {
+-      name: 'Deal',
+-      params: { dealId: props.dealId },
+-      query: route.query,
+-    },
+-  })
+-  return items
++  return { name: 'Deals' }
+ })
+ 
+ const title = computed(() => {
+diff --git a/frontend/src/pages/MobileLead.vue b/frontend/src/pages/MobileLead.vue
+index d8f9d98..e856474 100644
+--- a/frontend/src/pages/MobileLead.vue
++++ b/frontend/src/pages/MobileLead.vue
+@@ -1,14 +1,21 @@
+ <template>
+   <LayoutHeader>
+     <header
+-      class="relative flex h-10.5 items-center justify-between gap-2 py-2.5 pl-2"
++      class="relative flex h-10.5 min-w-0 items-center justify-between gap-2 py-2.5 pl-2"
+     >
+-      <Breadcrumbs :items="breadcrumbs">
+-        <template #prefix="{ item }">
+-          <Icon v-if="item.icon" :icon="item.icon" class="mr-2 h-4" />
+-        </template>
+-      </Breadcrumbs>
+-      <div class="shrink-0">
++      <div class="flex min-w-0 flex-1 items-center gap-1">
++        <RouterLink
++          :to="listRoute"
++          :aria-label="__('Leads')"
++          class="flex size-8 shrink-0 items-center justify-center rounded"
++        >
++          <span class="lucide-chevron-left size-4" aria-hidden="true" />
++        </RouterLink>
++        <span class="min-w-0 truncate text-base font-medium" :title="title">
++          {{ title }}
++        </span>
++      </div>
++      <div class="min-w-0 max-w-[45%]">
+         <Dropdown
+           v-if="doc"
+           :options="
+@@ -24,6 +31,8 @@
+           <template #default="{ open }">
+             <Button
+               v-if="doc.status"
++              class="max-w-full [&>span]:min-w-0 [&>span]:truncate"
++              :title="statusLabel(doc.status)"
+               :label="statusLabel(doc.status)"
+               :iconRight="open ? 'lucide-chevron-up' : 'lucide-chevron-down'"
+             >
+@@ -38,10 +47,10 @@
+   </LayoutHeader>
+   <div
+     v-if="doc.name"
+-    class="flex h-12 items-center justify-between gap-2 border-b px-3 py-2.5"
++    class="flex min-h-12 min-w-0 shrink-0 flex-wrap items-center justify-between gap-2 border-b px-3 py-2.5"
+   >
+     <AssignTo v-model="assignees.data" doctype="CRM Lead" :docname="leadId" />
+-    <div class="flex items-center gap-2">
++    <div class="ml-auto flex min-w-0 max-w-full flex-wrap items-center justify-end gap-2">
+       <CustomActions
+         v-if="document._actions?.length"
+         :actions="document._actions"
+@@ -65,12 +74,12 @@
+       </Tooltip>
+     </div>
+   </div>
+-  <div v-if="doc.name" class="flex h-full overflow-hidden">
++  <div v-if="doc.name" class="flex min-h-0 min-w-0 flex-1 overflow-hidden">
+     <Tabs
+       v-model="activeTab"
+       as="div"
+       :tabs="tabs"
+-      class="flex flex-1 overflow-auto flex-col [&_[role='tab']]:px-1 [&_[role='tab']]:shrink-0 [&_[role='tablist']]:px-3 [&_[role='tablist']]:min-h-[45px] [&_[role='tablist']]:gap-[22px] [&>[role='tabpanel']:not([hidden])]:flex [&>[role='tabpanel']:not([hidden])]:grow [&>[data-slot=tab-list]]:overflow-x-auto [&_[data-slot=tab-indicator]]:translate-y-0 [&>[data-slot=tab-panel]]:min-h-0 [&>[data-slot=tab-panel]]:flex-col [&>[data-slot=tab-panel]]:overflow-auto"
++      class="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden [&_[role=tablist]]:min-w-0 [&_[role=tablist]]:max-w-full [&_[role=tablist]]:overflow-x-auto [&_[role=tabpanel]]:min-w-0 [&_[role='tab']]:px-1 [&_[role='tab']]:shrink-0 [&_[role='tablist']]:px-3 [&_[role='tablist']]:min-h-[45px] [&_[role='tablist']]:gap-[22px] [&>[role='tabpanel']:not([hidden])]:flex [&>[role='tabpanel']:not([hidden])]:grow [&>[data-slot=tab-list]]:overflow-x-auto [&_[data-slot=tab-indicator]]:translate-y-0 [&>[data-slot=tab-panel]]:min-h-0 [&>[data-slot=tab-panel]]:flex-col [&>[data-slot=tab-panel]]:overflow-auto"
+     >
+       <template #tab-panel="{ tab }">
+         <div v-if="tab.name == 'Details'">
+@@ -134,7 +143,6 @@
+ <script setup>
+ import DeleteLinkedDocModal from '@/components/DeleteLinkedDocModal.vue'
+ import ErrorPage from '@/components/ErrorPage.vue'
+-import Icon from '@/components/Icon.vue'
+ import DetailsIcon from '@/components/Icons/DetailsIcon.vue'
+ import ActivityIcon from '@/components/Icons/ActivityIcon.vue'
+ import EmailIcon from '@/components/Icons/EmailIcon.vue'
+@@ -168,7 +176,6 @@ import {
+   Dropdown,
+   Tooltip,
+   Tabs,
+-  Breadcrumbs,
+   call,
+   usePageMeta,
+ } from 'frappe-ui'
+@@ -249,33 +256,17 @@ watch(
+ 
+ const reload = ref(false)
+ 
+-const breadcrumbs = computed(() => {
+-  let items = [{ label: __('Leads'), route: { name: 'Leads' } }]
+-
+-  if (route.query.view || route.query.viewType) {
+-    let view = getView(route.query.view, route.query.viewType, 'CRM Lead')
+-    if (view) {
+-      items.push({
+-        label: __(view.label),
+-        icon: view.icon,
+-        route: {
+-          name: 'Leads',
+-          params: { viewType: route.query.viewType },
+-          query: { view: route.query.view },
+-        },
+-      })
++const listRoute = computed(() => {
++  const view = (route.query.view || route.query.viewType)
++    && getView(route.query.view, route.query.viewType, 'CRM Lead')
++  if (view) {
++    return {
++      name: 'Leads',
++      params: { viewType: route.query.viewType },
++      query: { view: route.query.view },
+     }
+   }
+-
+-  items.push({
+-    label: title.value,
+-    route: {
+-      name: 'Lead',
+-      params: { leadId: props.leadId },
+-      query: route.query,
+-    },
+-  })
+-  return items
++  return { name: 'Leads' }
+ })
+ 
+ const title = computed(() => {
